@@ -50,8 +50,9 @@ Edge.prototype.splice = function(a,b){
     beta.next = t4
 }
 
-Edge.prototype.deleteEdge = function(){
-    
+Edge.prototype.deleteEdge = function(e){
+    this.splice(e, e.oprev())
+    this.splice(e.sym(), e.sym().oprev())
 }
 
 Edge.prototype.rot = function(){

@@ -43,9 +43,9 @@ View.prototype.drawBackground = function(){
     this.ctx.globalAlpha = 1;
     this.ctx.beginPath();
     this.ctx.rect(0,0,this.canvas.width,this.canvas.height);
-    this.ctx.fillStyle = '#fff';
+    this.ctx.fillStyle = '#000';
     this.ctx.fill();
-    this.ctx.strokeStyle = '#888';
+    this.ctx.strokeStyle = '#999';
     this.ctx.stroke();
 }
 
@@ -64,18 +64,11 @@ View.prototype.drawEdges = function(org, dest){
     this.ctx.beginPath();
     this.ctx.lineWidth=0.5;
     this.ctx.globalAlpha=1;
-    let va, vb;
-//    for (var i = 0; i < vor.edges.length; i++) {
-        // org = vor.edges[i].data;
-        // dest = vor.edges[i].next.data;
     if (org === undefined || dest === undefined){
         return;
     }
-    console.log(org, dest)
-    console.log(dest.x, dest.y)
     this.ctx.moveTo(org.x,org.y)
     this.ctx.lineTo(dest.x, dest.y);
-    //  }
     this.ctx.strokeStyle='#0ff';
     this.ctx.stroke();
 }
