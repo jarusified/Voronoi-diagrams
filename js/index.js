@@ -1,32 +1,26 @@
 const Voronoi = require('./Voronoi.js')
-const Site = require('./Point.js')
+const Compute = require('./Compute.js')
 const View = require('./View.js')
 
 let sites = [];
 let nop = 10;
-let vor = Voronoi()
-let view = View()
 
-function generateRandomPoints(nop){
-}
-    
-
-function drawDelaunay(){   
-    for(var site in sites){
-        vor.getSiteDelaunay(sites[site])
-    }
+function App(){
+    this.vor = Voronoi()
+    this.View = View()
+    this.vor.init(0, window.innerWidth, 0, window.innerHeight)
 }
 
-function drawVoronoi(){
-    
+App.prototype.draw = function(){
+    Compute.Delaunay(this.vor)
+    this.View.render(this.vor)
 }
 
-function init(){
-    vor.init(0, window.innerWidth, 0, window.innerHeight)
-    console.log(vor);
-    view.render(vor)
-    sites = vor.randomPoints(nop)
-    drawDelaunay(sites);
+App.prototype.redraw = function(){
+    this.View.ctx.clearRect(0, 0, this.View.canvas.width, this.View.canvas.height);
+    this.draw()
 }
 
-init()
+window.App =  new App()
+window.App.draw()
+

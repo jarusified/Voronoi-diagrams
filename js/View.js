@@ -1,9 +1,11 @@
 const Site = require('./Point.js')
+const Compute = require('./Compute.js')
+const Voronoi = require('./Voronoi.js')
+const App = require('./index.js')
 
 function View(){
     this.canvas = document.createElement('canvas')
-    this.ctx = null
-           
+    this.ctx = null           
 }
 
 View.prototype.initCanvas = function(vor){
@@ -55,7 +57,7 @@ View.prototype.drawBackground = function(){
 }
 
 View.prototype.drawSites = function(vor){
-    this.ctx.beginPath()
+    this.ctx.beginPath()    
     for(let i = 0; i < vor.sites.length; i++){
         let site = vor.sites[i]
         this.ctx.rect(site.x - 0.25, site.y - 0.25, 5, 5);
@@ -69,19 +71,20 @@ View.prototype.drawEdges = function(vor){
     this.ctx.beginPath();
     this.ctx.lineWidth=0.5;
     this.ctx.globalAlpha=1;
-    console.log(vor.edges)
     let va, vb;
     for (var i = 0; i < vor.edges.length; i++) {
         org = vor.edges[i].data;
         dest = vor.edges[i].next.data;
-        console.log(org, dest)
-        if (org.x === undefined || dest === undefined){
-            continue
+        if (org === undefined || dest === undefined){
+            console.log('a')
+            break
         }
+        console.log(org, dest)
+        console.log(dest.x, dest.y)
         this.ctx.moveTo(org.x,org.y)
         this.ctx.lineTo(dest.x, dest.y);
     }
-    this.ctx.strokeStyle='#000';
+    this.ctx.strokeStyle='#0ff';
     this.ctx.stroke();
 }
 
@@ -91,6 +94,5 @@ View.prototype.render = function(vor){
     this.drawSites(vor)
     this.drawEdges(vor)
 }
-
 
 module.exports = function() { return new View(); }
