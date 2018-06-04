@@ -1,14 +1,8 @@
-const Site = require('./Point.js')
-const Compute = require('./Compute.js')
-const Voronoi = require('./Voronoi.js')
 const App = require('./index.js')
+const Site = require('./Point.js')
 
 function View(){
     this.canvas = document.createElement('canvas')
-    this.ctx = null           
-}
-
-View.prototype.initCanvas = function(vor){
     this.canvas.style.cssText = "width: 100%; height: 100%; z-index: 0; margin: 0px; padding: 0px; background: black; border: none; display:block;";
     parentDiv = document.body;
     parentDiv.appendChild(this.canvas)
@@ -41,8 +35,7 @@ View.prototype.initCanvas = function(vor){
             x = e.clientX+document.body.scrollLeft+document.documentElement.scrollLeft;
             y = e.clientY+document.body.scrollTop+document.documentElement.scrollTop;
         }
-
-        vor.addSite(new Site(x, y))
+        window.App.vor.addSite(new Site(x, y))
     }
 }
 
@@ -56,10 +49,10 @@ View.prototype.drawBackground = function(){
     this.ctx.stroke();
 }
 
-View.prototype.drawSites = function(vor){
+View.prototype.drawPoints = function(sites){
     this.ctx.beginPath()    
-    for(let i = 0; i < vor.sites.length; i++){
-        let site = vor.sites[i]
+    for(let i = 0; i < sites.length; i++){
+        let site = sites[i]
         this.ctx.rect(site.x - 0.25, site.y - 0.25, 5, 5);
     }
     this.ctx.globalAlpha = 1
@@ -67,29 +60,27 @@ View.prototype.drawSites = function(vor){
     this.ctx.fill()
 }
 
-View.prototype.drawEdges = function(vor){
+View.prototype.drawEdges = function(org, dest){
     this.ctx.beginPath();
     this.ctx.lineWidth=0.5;
     this.ctx.globalAlpha=1;
     let va, vb;
-    for (var i = 0; i < vor.edges.length; i++) {
-        org = vor.edges[i].data;
-        dest = vor.edges[i].next.data;
-        if (org === undefined || dest === undefined){
-            console.log('a')
-            break
-        }
-        console.log(org, dest)
-        console.log(dest.x, dest.y)
-        this.ctx.moveTo(org.x,org.y)
-        this.ctx.lineTo(dest.x, dest.y);
+//    for (var i = 0; i < vor.edges.length; i++) {
+        // org = vor.edges[i].data;
+        // dest = vor.edges[i].next.data;
+    if (org === undefined || dest === undefined){
+        return;
     }
+    console.log(org, dest)
+    console.log(dest.x, dest.y)
+    this.ctx.moveTo(org.x,org.y)
+    this.ctx.lineTo(dest.x, dest.y);
+    //  }
     this.ctx.strokeStyle='#0ff';
     this.ctx.stroke();
 }
 
 View.prototype.render = function(vor){
-    this.initCanvas(vor)
     this.drawBackground()
     this.drawSites(vor)
     this.drawEdges(vor)

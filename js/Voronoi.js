@@ -1,12 +1,11 @@
+const App = require('./index.js')
 const Site = require('./Point.js')
 const Edge = require('./edge.js')
-const App = require('./index.js')
 
 function Voronoi(){
     this.e = 1e-6
     this.nop = 10
     this.sites = []
-    return this;    
 }
 
 Voronoi.prototype.randomPoints = function (nop){
@@ -78,6 +77,7 @@ Voronoi.prototype.addSite = function(site){
 
     self.startEdge = newEdge
     this.sites.push(site)
+    this.edges.push(newEdge)
     window.App.redraw()
 }
 
@@ -115,9 +115,23 @@ Voronoi.prototype.locateSite = function(site){
 }
 
 Voronoi.prototype.getSiteDelaunay = function(site){
+    let ret = []
     let location = this.locateSite(site)
-    console.log(location)
-    
+
+    if(!location.org()){
+        location = location.sym()
+    }
+
+    let temp = location
+    while(true){
+        ret.push(location.dest())
+        temp = temp.onext()
+        if( temp == location ){
+            break
+        }
+    }
+    console.log(ret)
+    return ret;
 }
 
 module.exports = function() { return new Voronoi(); }
