@@ -24,6 +24,8 @@ function quadEdge(){
     this.eArr[1].qedge = this
     this.eArr[2].qedge = this
     this.eArr[3].qedge = this
+
+    this.label = 0
 }
 
 function Edge(){

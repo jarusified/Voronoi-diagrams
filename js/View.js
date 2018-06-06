@@ -19,6 +19,8 @@ function View(){
     this.ctx.strokeStyle = '#999'
     this.ctx.stroke()
 
+    this.drawBackground()
+
     
     this.canvas.onclick = function(e){
         if(!e)
@@ -43,24 +45,27 @@ View.prototype.drawBackground = function(){
     this.ctx.globalAlpha = 1;
     this.ctx.beginPath();
     this.ctx.rect(0,0,this.canvas.width,this.canvas.height);
-    this.ctx.fillStyle = '#000';
+    this.ctx.fillStyle = '#fff';
     this.ctx.fill();
     this.ctx.strokeStyle = '#999';
     this.ctx.stroke();
 }
 
-View.prototype.drawPoints = function(sites){
+View.prototype.drawPoints = function(sites, color){
     this.ctx.beginPath()    
     for(let i = 0; i < sites.length; i++){
         let site = sites[i]
         this.ctx.rect(site.x - 0.25, site.y - 0.25, 5, 5);
     }
     this.ctx.globalAlpha = 1
-    this.ctx.fillStyle = '#aabbcc'
+    if(color)
+        this.ctx.fillStyle = color
+    else
+        this.ctx.fillStyle = '#aabbcc'
     this.ctx.fill()
 }
 
-View.prototype.drawEdges = function(org, dest){
+View.prototype.drawEdges = function(org, dest, color){
     this.ctx.beginPath();
     this.ctx.lineWidth=0.5;
     this.ctx.globalAlpha=1;
@@ -69,7 +74,12 @@ View.prototype.drawEdges = function(org, dest){
     }
     this.ctx.moveTo(org.x,org.y)
     this.ctx.lineTo(dest.x, dest.y);
-    this.ctx.strokeStyle='#0ff';
+    if(color){
+        this.ctx.strokeStyle = color
+    }
+    else{
+        this.ctx.strokeStyle='#0ff';
+    }
     this.ctx.stroke();
 }
 
