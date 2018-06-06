@@ -11,7 +11,7 @@ function App(){
 }
 
 App.prototype.draw = function(){
-    this.Voronoi()
+//    this.Voronoi()
     this.Delaunay()
 //    this.View.render(this.vor)
 }
@@ -38,7 +38,7 @@ App.prototype.Triangle = function(edge){
     p1 = edge.dest()
     p2 = edge.lnext().dest()
 
-//    this.View.drawEdges(p0, p1, '#aabbcc')
+    this.View.drawEdges(p0, p1, '#aabbcc')
 
     ledge = edge.onext()
     if(ledge.qedge.label == 0)

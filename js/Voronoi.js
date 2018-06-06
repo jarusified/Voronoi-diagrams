@@ -173,29 +173,29 @@ Voronoi.prototype.addSite = function(site){
 
     this.startEdge = newEdge
 
-    count = 0
-    while(1){
-        newEdge = this.connect(e, newEdge.sym())
-        e = newEdge.oprev()
-        if(e.lnext() == this.startEdge){
-            break;
-        }
-    }
+    // count = 0
+    // while(1){
+    //     newEdge = this.connect(e, newEdge.sym())
+    //     e = newEdge.oprev()
+    //     if(e.lnext() == this.startEdge){
+    //         break;
+    //     }
+    // }
 
-    while(1){        
-        let temp = e.oprev()
-        if(this.rightOfEdge(temp.dest(), e) && this.triInCircle(e.org(), temp.dest(), e.dest(), site)){
-            e = this.swap(e)
-            e = e.oprev()
-        }
-        else if (e.onext() == this.startEdge){
-            break
-        }
-        else{
-            e = e.onext().lprev()
-        }
-        count += 1
-    }
+    // while(1){        
+    //     let temp = e.oprev()
+    //     if(this.rightOfEdge(temp.dest(), e) && this.triInCircle(e.org(), temp.dest(), e.dest(), site)){
+    //         e = this.swap(e)
+    //         e = e.oprev()
+    //     }
+    //     else if (e.onext() == this.startEdge){
+    //         break
+    //     }
+    //     else{
+    //         e = e.onext().lprev()
+    //     }
+    //     count += 1
+    // }
 
     this.sites.push(site)
     this.edges.push(newEdge)
@@ -244,7 +244,9 @@ Voronoi.prototype.getSiteVoronoi = function(site){
     }
 
     let temp = location
+    let count = 0
     while(true){
+        console.log(count)
         p0 = temp.org()
         p1 = temp.dest()
         p2 = temp.lnext().dest()
@@ -252,8 +254,10 @@ Voronoi.prototype.getSiteVoronoi = function(site){
         ret.push(newPoint)
         temp = temp.onext()
         if( temp == location){
+            count = 0
             break;
-        }    
+        }
+        count += 1
     }
 
     return ret;
