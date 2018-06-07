@@ -11,9 +11,10 @@ function App(){
 }
 
 App.prototype.draw = function(){
-//    this.Voronoi()
+    this.Voronoi()
     this.Delaunay()
-//    this.View.render(this.vor)
+    this.sibson()
+    //    this.View.render(this.vor)
 }
 
 App.prototype.redraw = function(){
@@ -27,8 +28,11 @@ App.prototype.Voronoi = function(){
         voronoiPoints = this.vor.getSiteVoronoi(sites[site])
         console.log(voronoiPoints)
         this.View.drawPoints(voronoiPoints, '#f00')
+        for(let pts in voronoiPoints){
+            this.View.drawEdges(sites[site], voronoiPoints[pts], '#ddccaa')
+        }
+
     }
-    
 }
 
 App.prototype.Triangle = function(edge){
@@ -70,6 +74,14 @@ App.prototype.Delaunay = function(){
         for(let pts in delaunayPoints){
             this.View.drawEdges(sites[site], delaunayPoints[pts], '#55dd33')
         }
+    }
+}
+
+App.prototype.sibson = function(){
+    let dims = 200
+    let values = []
+    
+    for(let site in sites){
     }
 }
 
