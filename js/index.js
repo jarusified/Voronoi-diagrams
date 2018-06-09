@@ -1,35 +1,83 @@
 const Voronoi = require('./Voronoi.js')
 const View = require('./View.js')
+const Site = require('./Point.js')
 
 let sites = [];
 let nop = 10;
 
-function App(){
-    this.vor = Voronoi()
-    this.vor.init(0, window.innerWidth, 0, window.innerHeight)
-    this.View = View()
+function SiteList(pts){
+    this.sites = []
+    this.sitenum = 0
+
+    this.xmin = pts[0].x
+    this.ymin = pts[0].y
+    this.xmax = pts[0].x
+    this.ymax = pts[0].y
+
+    for(let i = 0; i < pts.length; i++){
+        pt = pts[i]
+        this.sites.push(Site(pt.x, pt.y, i))
+        if (pt.x < this.xmin){
+            this.xmin = pt.x
+        }
+        if (pt.y < this.ymin){
+            this.ymin = pt.y
+        }
+        if (pt.x > this.xmax){
+            this.xmax = pt.x
+        }
+        if(pt.y > this.ymax){
+            this.ymax = pt.y
+        }
+    }
 }
 
+
+function App(){
+    let pts = this.randomPoints(4)
+    this.vor = Voronoi()
+    this.sl = new SiteList(pts)
+    this.vor.init(this.sl.xmin, this.sl.xmax, this.sl.ymin, this.sl.ymax)
+    this.View = View()
+    this.View.drawPoints(pts, '#00f')
+    for(let i = 0; i < pts.length; i++){
+        this.vor.addSite(pts[i])
+    }
+
+}
+
+App.prototype.randomPoints = function (nop){
+    var ret = []
+    for(let i = 0; i < nop; i++){
+        ret.push(new Site(Math.floor(Math.random()*window.innerWidth), Math.floor(Math.random()*window.innerHeight)))
+    }
+    return ret;
+}
+
+
 App.prototype.draw = function(){
-    this.Voronoi()
-    this.Delaunay()
+    this.drawVoronoi()
+    this.drawTriangles(this.sl.sites)
+    //    this.Delaunay()
     this.sibson()
+//    this.Triangle(this.vor.startEdge)
     //    this.View.render(this.vor)
 }
 
 App.prototype.redraw = function(){
-//    this.View.ctx.clearRect(0, 0, this.View.canvas.width, this.View.canvas.height);
     this.draw()
 }
 
-App.prototype.Voronoi = function(){
-    let sites = this.vor.sites
+App.prototype.drawVoronoi = function(){
+    let sites = this.sl.sites
+    this.View.drawPoints(sites, '#f00')
     for(let site in sites){
-        voronoiPoints = this.vor.getSiteVoronoi(sites[site])
-        console.log(voronoiPoints)
+        voronoiPoints = this.vor.getVoronoi(sites)
         this.View.drawPoints(voronoiPoints, '#f00')
         for(let pts in voronoiPoints){
-            this.View.drawEdges(sites[site], voronoiPoints[pts], '#ddccaa')
+            for(let pt in voronoiPoints){
+                this.View.drawEdges(voronoiPoints[pt], voronoiPoints[pts], '#ddccaa')
+            }
         }
 
     }
@@ -42,8 +90,8 @@ App.prototype.Triangle = function(edge){
     p1 = edge.dest()
     p2 = edge.lnext().dest()
 
-    this.View.drawEdges(p0, p1, '#aabbcc')
-
+    this.View.drawEdges(p1, p2, '#aabbcc')
+    this.View.drawEdges(p2, p0 ,'#aabbcc')
     ledge = edge.onext()
     if(ledge.qedge.label == 0)
         this.Triangle(ledge)
@@ -62,12 +110,8 @@ App.prototype.Triangle = function(edge){
         this.Triangle(redge)
 }
 
-App.prototype.Delaunay = function(){
-    base = this.vor.startEdge
-    if(base != undefined)
-        this.Triangle(base)
-
-    let sites = this.vor.sites
+App.prototype.drawDelaunay = function(){
+    let sites = this.sl.sites
     for(let site in sites){
         delaunayPoints = this.vor.getSiteDelaunay(sites[site])
         this.View.drawPoints(delaunayPoints, '#ffddcc')
@@ -77,6 +121,13 @@ App.prototype.Delaunay = function(){
     }
 }
 
+App.prototype.drawTriangles = function(sites){
+    base = this.vor.locateSite(sites[0])
+    if(base != undefined)
+        this.Triangle(base)
+
+}
+
 App.prototype.sibson = function(){
     let dims = 200
     let values = []
@@ -84,7 +135,6 @@ App.prototype.sibson = function(){
     for(let site in sites){
     }
 }
-
 
 
 window.App =  new App()
