@@ -33,12 +33,12 @@ Voronoi.prototype.area = function(a, b, c){
         return -1
     }
     let area =  (b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x)
-//    console.log("area", a, b, c, area)
+    console.log(area)
     return area
 }
 
 Voronoi.prototype.rightOfEdge = function(p, site){
-    return this.area(p, site.dest(), site.org()) > 0
+    return this.area(p, site.dest(), site.org()) >= 0
 }
 
 Voronoi.prototype.leftOfEdge = function(p, site){
@@ -59,13 +59,13 @@ Voronoi.prototype.circumCenter = function(p0, p1, p2){
     let xmk = xm - xk
     let ymk = ym - yk
     let det = xlk * ymk - xmk * ylk
+    
+    let detinv = 0.5 / det
 
     rlksq = xlk * xlk + ylk * ylk
     rmksq = xmk * xmk + ymk * ymk
-
-    if(det == 0) det = 1
-    xcc = (0.5*(rlksq*ymk - rmksq*ylk))/det
-    ycc = (0.5*(rmksq*xlk - rlksq*xmk))/det
+    xcc = detinv*(rlksq*ymk - rmksq*ylk)
+    ycc = detinv*(rmksq*xlk - rlksq*xmk)
 
     return new Site(xcc + xk, ycc + yk)
 }
@@ -87,8 +87,6 @@ Voronoi.prototype.onEdge = function(p, site){
     t1 = org.length()
     t2 = dest.length()
 
-    console.log("t1111111", t1, t2)
-
     if(t1 < 0.001 || t2 < 0.001){
         return true;
     }
@@ -97,11 +95,8 @@ Voronoi.prototype.onEdge = function(p, site){
         return false;
     }
     diff = e.dest().sub(e.org())
-    console.log(diff)
-    console.log(e.org(), e.dest())
     line = new Line(e.org(), e.dest(), diff)
     lineDiff = Math.abs(line.eval(p))
-    console.log(lineDiff)
     return lineDiff < 0.00001
 }
 
@@ -149,53 +144,54 @@ Voronoi.prototype.init = function(minX, maxX, minY, maxY){
     edge_obj.splice(edges[3], edges[0].sym())
     this.startEdge = edges[0]
     this.edges = edges
-    console.log("edges", this.edges)
 }
 
 Voronoi.prototype.addSite = function(site){
     e = this.locateSite(site)
-    
-    let edge_obj = Edge()
-    if( site == e.org() || site == e.dest()){
-        return undefined
-    }
-    else if(this.onEdge(site, e)){
-        e = e.oprev()
-        edge_obj.deleteEdge(e.oprev())
-    }
-    base = edge_obj.createEdge()
-    newEdge = base
-    base.endPoints(e.org(), site)
-    edge_obj.splice(base, e)
 
-    this.startEdge = base
-    
-    while(1){
-        base = this.connect(e, newEdge.sym())
-        e = base.oprev()
-        if(e.lnext() == this.startEdge){
-            break;
+    if(e != undefined){
+        let edge_obj = Edge()
+        if( site == e.org() || site == e.dest()){
+            return undefined
         }
-    }
-
-    while(1){        
-        let temp = e.oprev()
-        if(this.rightOfEdge(temp.dest(), e) && this.inCircle(e.org(), temp.dest(), e.dest(), site)){
-            e = this.swap(e)
+        else if(this.onEdge(site, e)){
             e = e.oprev()
+            edge_obj.deleteEdge(e.oprev())
         }
-        else if (e.onext() == this.startEdge){
-            break
-        }
-        else{
-            e = e.onext().lprev()
-        }
-        count += 1
-    }
+        base = edge_obj.createEdge()
+        newEdge = base
+        base.endPoints(e.org(), site)
+        edge_obj.splice(base, e)
 
-    this.sites.push(site)
-    this.edges.push(newEdge)
-//    window.App.redraw()
+        this.startEdge = base
+        
+        while(1){
+            base = this.connect(e, newEdge.sym())
+            e = base.oprev()
+            if(e.lnext() == this.startEdge){
+                break;
+            }
+        }
+
+        while(1){        
+            let temp = e.oprev()
+            if(this.rightOfEdge(temp.dest(), e) && this.inCircle(e.org(), temp.dest(), e.dest(), site)){
+                e = this.swap(e)
+                e = e.oprev()
+            }
+            else if (e.onext() == this.startEdge){
+                break
+            }
+            else{
+                e = e.onext().lprev()
+            }
+            count += 1
+        }
+
+        this.sites.push(site)
+        this.edges.push(newEdge)
+        //    window.App.redraw()
+    }
 }
 
 Voronoi.prototype.locateSite = function(site){
@@ -206,7 +202,7 @@ Voronoi.prototype.locateSite = function(site){
 
         if(count == 10){
             console.log('Site failing', site);
-            return e
+            return undefined
         }
         
         if(site == e.org() || site == e.dest()){
@@ -233,23 +229,26 @@ Voronoi.prototype.getSiteVoronoi = function(site){
     let ret = []
     let location = this.locateSite(site)
 
-     if(!location.org()){
-        location = location.sym()
-    }
+    if(location != undefined){
+        if(!location.org()){
+            location = location.sym()
+        }
 
-    let temp = location
-    while(true){
-        p0 = temp.org()
-        p1 = temp.dest()
-        p2 = temp.lnext().dest()
-        newPoint = this.circumCenter(p0, p1, p2)
-        ret.push(newPoint)
-        temp = temp.onext()
-        if( temp == location){
-            break;
+        let temp = location
+        while(true){
+            p0 = temp.org()
+            p1 = temp.dest()
+            p2 = temp.lnext().dest()
+            newPoint = this.circumCenter(p0, p1, p2)
+            ret.push(newPoint)
+            temp = temp.onext()
+            if( temp == location){
+                break;
+            }
         }
     }
 
+    console.log(ret)
     return ret;
 }
 

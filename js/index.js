@@ -16,7 +16,7 @@ function SiteList(pts){
 
     for(let i = 0; i < pts.length; i++){
         pt = pts[i]
-        this.sites.push(Site(pt.x, pt.y, i))
+        this.sites.push(new Site(pt.x, pt.y, i))
         if (pt.x < this.xmin){
             this.xmin = pt.x
         }
@@ -34,9 +34,10 @@ function SiteList(pts){
 
 
 function App(){
-    let pts = this.randomPoints(4)
+    let pts = this.randomPoints(5)
     this.vor = Voronoi()
     this.sl = new SiteList(pts)
+    console.log(this.vor)
     this.vor.init(this.sl.xmin, this.sl.xmax, this.sl.ymin, this.sl.ymax)
     this.View = View()
     this.View.drawPoints(pts, '#00f')
@@ -57,7 +58,7 @@ App.prototype.randomPoints = function (nop){
 
 App.prototype.draw = function(){
     this.drawVoronoi()
-    this.drawTriangles(this.sl.sites)
+//    this.drawTriangles(this.sl.sites)
     //    this.Delaunay()
     this.sibson()
 //    this.Triangle(this.vor.startEdge)
@@ -70,17 +71,15 @@ App.prototype.redraw = function(){
 
 App.prototype.drawVoronoi = function(){
     let sites = this.sl.sites
-    this.View.drawPoints(sites, '#f00')
     for(let site in sites){
         voronoiPoints = this.vor.getVoronoi(sites)
-        this.View.drawPoints(voronoiPoints, '#f00')
-        for(let pts in voronoiPoints){
-            for(let pt in voronoiPoints){
-                this.View.drawEdges(voronoiPoints[pt], voronoiPoints[pts], '#ddccaa')
-            }
-        }
-
+        //        this.View.drawPoints(voronoiPoints, '#f00')
     }
+    voronoiPoints.push(voronoiPoints[0])
+    for(let pts in voronoiPoints){
+        this.View.drawEdges(voronoiPoints[pts-1], voronoiPoints[pts], '#ddccaa')
+    }
+    
 }
 
 App.prototype.Triangle = function(edge){
