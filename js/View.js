@@ -72,8 +72,10 @@ View.prototype.drawEdges = function(org, dest, color){
     if (org === undefined || dest === undefined){
         return;
     }
-    this.ctx.moveTo(org.x,org.y)
-    this.ctx.lineTo(dest.x, dest.y);
+    for(let i = 0; i < org.length; i++){
+	this.ctx.moveTo(org[i].x,org[i].y)
+	this.ctx.lineTo(dest[i].x, dest[i].y);
+    }
     if(color){
         this.ctx.strokeStyle = color
     }
