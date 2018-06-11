@@ -33,7 +33,6 @@ Voronoi.prototype.area = function(a, b, c){
         return -1
     }
     let area =  (b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x)
-    console.log(area)
     return area
 }
 
@@ -195,14 +194,14 @@ Voronoi.prototype.addSite = function(site){
 }
 
 Voronoi.prototype.locateSite = function(site){
-    console.log("Start edge:", this.startEdge.data)
+
     e = this.startEdge
     count = 0
     while(true){
 
         if(count == 10){
             console.log('Site failing', site);
-            return undefined
+            return e
         }
         
         if(site == e.org() || site == e.dest()){
@@ -212,11 +211,9 @@ Voronoi.prototype.locateSite = function(site){
             e = e.sym()
         }
         else if(!this.rightOfEdge(site, e.onext())){
-            console.log('a')
             e = e.onext()
         }
         else if(!this.rightOfEdge(site, e.dprev())){
-            console.log('d')
             e = e.dprev()
         }
         else
@@ -285,7 +282,6 @@ Voronoi.prototype.getVoronoi = function(sites){
             vor.push({ "x" : p.x, "y" : p.y })
         }
     }
-    console.log(vor)
     return vor
 }
 

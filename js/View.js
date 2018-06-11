@@ -53,7 +53,7 @@ View.prototype.drawBackground = function(){
 
 View.prototype.drawPoint = function(site, color){
     this.ctx.beginPath();
-    this.ctx.rect(site[0] - 0.25, site[1] - 0.25, 5, 5);
+    this.ctx.rect(site.x - 0.25, site.y - 0.25, 5, 5);
     this.ctx.globalAlpha = 1
     if(color)
         this.ctx.fillStyle = color
@@ -76,7 +76,7 @@ View.prototype.drawPoints = function(sites, color){
     this.ctx.fill()
 }
 
-View.prototype.drawEdges = function(org, dest, color){
+View.prototype.drawEdges2 = function(org, dest, color){
     this.ctx.beginPath();
     this.ctx.lineWidth=0.5;
     this.ctx.globalAlpha=1;
@@ -84,8 +84,8 @@ View.prototype.drawEdges = function(org, dest, color){
         return;
     }
     for(let i = 0; i < org.length; i++){
-	this.ctx.moveTo(org[i].x,org[i].y)
-	this.ctx.lineTo(dest[i].x, dest[i].y);
+	    this.ctx.moveTo(org[i].x,org[i].y)
+	    this.ctx.lineTo(dest[i].x, dest[i].y);
     }
     if(color){
         this.ctx.strokeStyle = color
@@ -94,6 +94,51 @@ View.prototype.drawEdges = function(org, dest, color){
         this.ctx.strokeStyle='#0ff';
     }
     this.ctx.stroke();
+}
+
+View.prototype.drawEdges = function(org, dest, color){
+    this.ctx.beginPath();
+    this.ctx.lineWidth=0.5;
+    this.ctx.globalAlpha=1;
+    if (org === undefined || dest === undefined){
+        return;
+    }
+	this.ctx.moveTo(org.x,org.y)
+	this.ctx.lineTo(dest.x, dest.y);
+    if(color){
+        this.ctx.strokeStyle = color
+    }
+    else{
+        this.ctx.strokeStyle='#0ff';
+    }
+    this.ctx.closePath()
+    this.ctx.stroke();
+    this.ctx.fill()
+}
+
+
+View.prototype.drawSpecialEdges = function(arr, color){
+    this.ctx.beginPath();
+    this.ctx.lineWidth=0.5;
+    this.ctx.globalAlpha=1;
+    if (org === undefined || dest === undefined){
+        return;
+    }
+    this.ctx.moveTo(arr[0].x, arr[0].y)
+    for(let i = 0; i < arr.length - 1; i++){
+        this.ctx.lineTo(arr[i+1].x, arr[i+1].y)
+        this.ctx.moveTo(arr[i].x, arr[i].y)
+    }
+    this.ctx.lineTo(arr[arr.length-1].x, arr[arr.length -1].y)
+    if(color){
+        this.ctx.strokeStyle = color
+    }
+    else{
+        this.ctx.strokeStyle='#0ff';
+    }
+    this.ctx.closePath()
+    this.ctx.stroke();
+    this.ctx.fill();
 }
 
 View.prototype.drawEdge = function(org, dest, color){
@@ -108,7 +153,9 @@ View.prototype.drawEdge = function(org, dest, color){
     else{
         this.ctx.strokeStyle='#0ff';
     }
+    this.ctx.closePath()
     this.ctx.stroke();
+
 }
 
 View.prototype.drawEdgeForLibrary = function(cells, points){
