@@ -3,6 +3,7 @@ const Voronoi2 = require('./Voronoi2.js')
 const View = require('./View.js')
 const Site = require('./Point.js')
 const Sibson = require('./Sibson.js')
+const d3n = require('voronoi-diagram')
 
 let sites = [];
 let nop = 10;
@@ -49,13 +50,41 @@ function SiteList(pts){
 
 // }
 
+// function App(){
+//     let numOfSites = 20
+//     this.vor = new Voronoi2()
+//     this.View = new View()
+//     this.sibson = new Sibson(this.vor)
+//     for(let i = 0; i < numOfSites; i += 10){
+// 	this.vor.build(Math.min(10, numOfSites - i))
+//     }
+//     console.log(this.vor)
+//     let polygons = Array.from(this.vor.graph.regions.values())
+//     for(let i = 0; i < polygons.length; i++){
+// 	let edges = polygons[i].edges
+// 	for(let j = 0; j < edges.length; j++){
+// 	    let edge = edges[i]
+// 	    let p1 = edge.a
+// 	    let p2 = edge.b
+// 	    this.View.drawPoint(p1, '#0ff')
+// 	    this.View.drawPoint(p2, '#0ff')
+// //	    console.log(p1, p2)
+// 	    this.View.drawEdge(p1, p2, '#aaa')
+// 	}
+// //	this.View.drawPoint(polygons[i].polygonSite,'#aabbcc' )
+//     }
+// }
+
 function App(){
-    let numOfSites = 20
-    this.vor = new Voronoi2()
-    this.sibson = new Sibson(this.vor)
-    for(let i = 0; i < numOfSites; i += 10){
-	this.vor.build(Math.min(10, numOfSites - i))
+    const data = [ [ 130, 33], [39, 59], [255, 555], [44, 33], [123, 55], [122, 44], [33, 33], [200, 239], [500, 400] ]
+    let voronoi = d3n(data)
+    this.View = new View()
+    console.log(voronoi)
+    for(let i = 0; i < voronoi.positions.length; i+=1){
+	this.View.drawPoint(voronoi.positions[i], '#f00')
     }
+    this.View.drawEdgeForLibrary(voronoi.cells, voronoi.positions)
+
 }
 
 App.prototype.randomPoints = function (nop){

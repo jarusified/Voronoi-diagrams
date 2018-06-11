@@ -1,4 +1,5 @@
 const Edge = require('./halfEdge.js')
+const Point = require('./Point.js')
 
 function Polygon(){
     this.polygonSite = undefined
@@ -27,13 +28,12 @@ Polygon.prototype.getPolygonSite = function(){
 }
 
 Polygon.prototype.setPolygonSite = function(newSite){
-    this.polygonSiite = newSite
+    this.polygonSite = newSite
 }
 
 Polygon.prototype.addPoint = function(point, otherPointEdge){
     if(this.points.length != 0){
-	let edge = new Edge()
-	
+	let edge = new Edge()	
 	this.edges.push(edge.init(this.polygonSite, otherPointEdge, this.lastAddedPoint, point))
     }
 
@@ -49,8 +49,18 @@ Polygon.prototype.addPoint = function(point, otherPointEdge){
 }
 
 Polygon.prototype.clonePolygon = function(){
-    let clone = new Polygon(this.polygonSite)
-    
+    let clone = new Polygon()
+    clone.init(this.polygonSite)
+    for(let pts in this.points){
+	let point = this.points[pts]
+	clone.points.push(new Point(point.x, point.y))
+    }
+    for(let edgeID in this.edges){
+	let edge = this.edges[edgeID]
+	newEdge = new Edge()
+	clone.edges.push(newEdge.init(edge.site1, edge.site2, edge.a, edge.b))
+    }
+    return clone
 }
 
 Polygon.prototype.contains = function(inX, inY){

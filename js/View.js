@@ -51,6 +51,17 @@ View.prototype.drawBackground = function(){
     this.ctx.stroke();
 }
 
+View.prototype.drawPoint = function(site, color){
+    this.ctx.beginPath();
+    this.ctx.rect(site[0] - 0.25, site[1] - 0.25, 5, 5);
+    this.ctx.globalAlpha = 1
+    if(color)
+        this.ctx.fillStyle = color
+    else
+        this.ctx.fillStyle = '#aabbcc'
+    this.ctx.fill()
+}
+
 View.prototype.drawPoints = function(sites, color){
     this.ctx.beginPath()    
     for(let i = 0; i < sites.length; i++){
@@ -84,6 +95,39 @@ View.prototype.drawEdges = function(org, dest, color){
     }
     this.ctx.stroke();
 }
+
+View.prototype.drawEdge = function(org, dest, color){
+    this.ctx.beginPath()
+    this.ctx.lineWidth = 0.5
+    this.ctx.globalAlpha = 1
+    this.ctx.moveTo(org.x,org.y)
+    this.ctx.lineTo(dest.x, dest.y);
+    if(color){
+        this.ctx.strokeStyle = color
+    }
+    else{
+        this.ctx.strokeStyle='#0ff';
+    }
+    this.ctx.stroke();
+}
+
+View.prototype.drawEdgeForLibrary = function(cells, points){
+    for(var i=0; i<cells.length; ++i) {
+	var cell = cells[i]
+	if(cell.indexOf(-1) >= 0) {
+	    continue
+	}
+	this.ctx.beginPath()
+	this.ctx.moveTo(points[cell[0]][0], points[cell[0]][1])
+	for(var j=1; j<cell.length; ++j) {
+	    this.ctx.lineTo(points[cell[j]][0], points[cell[j]][1])
+	}
+	this.ctx.closePath()
+	this.ctx.stroke()
+//	this.ctx.fill()
+    }
+}
+
 
 View.prototype.render = function(vor){
     this.drawBackground()

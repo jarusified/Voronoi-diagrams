@@ -12,16 +12,15 @@ Graph.prototype.addPolygon = function(polygon){
     let site = polygon.getPolygonSite()
     if(this.regions.hasOwnProperty(site)){
 	console.log("Adding a polygon that is already present");
-	return 0;
     }
     this.regions.set(site, polygon)
 }
 
 Graph.prototype.updateExistingPolygon = function(polygon){
     let site = polygon.getPolygonSite()
+    console.log(this.regions, site)
     if(!this.regions.hasOwnProperty(site)){
 	console.log("Updating a polygon that is not already present");
-	return 0;
     }
     this.regions.set(site, polygon)
 }
@@ -47,7 +46,6 @@ Graph.prototype.getClosestPolygon = function(pt){
 	}
     }
     let closestPolygon = this.regions.get(closestPoint)
-    console.log(closestPolygon)
     return closestPolygon
 }
 
