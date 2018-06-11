@@ -1,6 +1,11 @@
 function Sibson(voronoi){
+
+}
+
+Sibson.prototype.init = function(voronoi){
     this.voronoi = voronoi
 }
+
 
 Sibson.prototype.interpolate = function(newSite){
     let areaSum = 0
@@ -20,3 +25,5 @@ Sibson.prototype.interpolate = function(newSite){
 
     
 }
+
+module.exports = function() { return new Sibson(); }

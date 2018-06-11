@@ -1,9 +1,15 @@
-function Polygon(site){
-    this.polygonSite = site
+const Edge = require('./halfEdge.js')
+
+function Polygon(){
+    this.polygonSite = undefined
     this.edges = []
     this.points = []
     this.lastAddedPoint = undefined
     this.isClosed = false
+}
+
+Polygon.prototype.init = function(site){
+    this.polygonSite = site
 }
 
 Polygon.prototype.isClosed = function(){
@@ -26,7 +32,9 @@ Polygon.prototype.setPolygonSite = function(newSite){
 
 Polygon.prototype.addPoint = function(point, otherPointEdge){
     if(this.points.length != 0){
-	this.edges.add(new Edge(point, otherPointEdge))
+	let edge = new Edge()
+	
+	this.edges.push(edge.init(this.polygonSite, otherPointEdge, this.lastAddedPoint, point))
     }
 
     if(this.points.length != 0 && this.points[0] == point){
@@ -42,7 +50,7 @@ Polygon.prototype.addPoint = function(point, otherPointEdge){
 
 Polygon.prototype.clonePolygon = function(){
     let clone = new Polygon(this.polygonSite)
-//    for(let i = 0; i < 
+    
 }
 
 Polygon.prototype.contains = function(inX, inY){

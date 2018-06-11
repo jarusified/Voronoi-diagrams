@@ -1,7 +1,7 @@
 const Point = require('./Point.js')
 
 function Graph(){
-    this.regions = []
+    this.regions = new Map()
 }
 
 Graph.prototype.getRegions = function(){
@@ -14,7 +14,7 @@ Graph.prototype.addPolygon = function(polygon){
 	console.log("Adding a polygon that is already present");
 	return 0;
     }
-    this.regions[site] = polygon
+    this.regions.set(site, polygon)
 }
 
 Graph.prototype.updateExistingPolygon = function(polygon){
@@ -23,7 +23,7 @@ Graph.prototype.updateExistingPolygon = function(polygon){
 	console.log("Updating a polygon that is not already present");
 	return 0;
     }
-    this.regions[site] = polygon
+    this.regions.set(site, polygon)
 }
 
 Graph.prototype.getPolygon = function(polygonSite){
@@ -33,8 +33,39 @@ Graph.prototype.getPolygon = function(polygonSite){
     return undefined
 }
 
-Graph.prototype.getClosestPolygon = function(point){
+Graph.prototype.getClosestPolygon = function(pt){
+    let closestPoint
+    let minDist = Number.MAX_VALUE
     
+    keyArr = Array.from(this.regions.keys())
+    for(let key in keyArr){
+	let point = new Point()
+	let dist = point.distanceTo(keyArr[key], pt)
+	if(dist < minDist){
+	    minDist = dist
+	    closestPoint = keyArr[key]
+	}
+    }
+    let closestPolygon = this.regions.get(closestPoint)
+    console.log(closestPolygon)
+    return closestPolygon
+}
+
+Graph.prototype.pointOnGraph = function(pt){
+    let distances = []
+    for(let i = 0; i < this.regions.length; i++){	
+	let point = new Point()
+	let dist = point.distanceTo(this.sites[i], pt);
+	distances[i] = dist
+    }
+
+    distances.sort()
+    for(let i = 0; i < distances.length - 1 ; i++){
+	if(abs(distances[i] - distances[i+1]) <= 0.0001){
+	    return true
+	}
+    }
+    return false
 }
 
 module.exports = Graph

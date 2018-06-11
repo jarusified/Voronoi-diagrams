@@ -2,6 +2,7 @@ const Voronoi = require('./Voronoi.js')
 const Voronoi2 = require('./Voronoi2.js')
 const View = require('./View.js')
 const Site = require('./Point.js')
+const Sibson = require('./Sibson.js')
 
 let sites = [];
 let nop = 10;
@@ -49,7 +50,12 @@ function SiteList(pts){
 // }
 
 function App(){
+    let numOfSites = 20
     this.vor = new Voronoi2()
+    this.sibson = new Sibson(this.vor)
+    for(let i = 0; i < numOfSites; i += 10){
+	this.vor.build(Math.min(10, numOfSites - i))
+    }
 }
 
 App.prototype.randomPoints = function (nop){
